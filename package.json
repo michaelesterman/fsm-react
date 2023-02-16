@@ -1,0 +1,7 @@
+{
+  "name": "fsa-react-showcase",
+  "workspaces": [
+    "packages/*",
+    "packages/libraries/*"
+  ]
+}
