@@ -12,5 +12,6 @@
     "forceConsistentCasingInFileNames": true,
     "removeComments": true,
     "composite": true
-  }
+  },
+  "exclude": ["node_modules", "dist", "*.d.ts"]
 }
