@@ -5,6 +5,8 @@
     "packages/libraries/*"
   ],
   "devDependencies": {
+    "eslint": "^8.34.0",
+    "eslint-plugin-import": "^2.27.5",
     "typescript": "^4.9.5"
   }
 }
