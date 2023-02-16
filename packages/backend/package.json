@@ -5,6 +5,7 @@
   "types": "dist/index.d.ts",
   "private": true,
   "scripts": {
+    "lint": "eslint . --ext .ts",
     "build": "rm -rf dist && tsc --build tsconfig.json"
   },
   "dependencies": {
