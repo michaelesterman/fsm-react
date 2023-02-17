@@ -1,0 +1,8 @@
+{
+  "name": "frontend",
+  "scripts": {
+    "test": "jest",
+    "build": "rm -rf dist && webpack --config webpack.prod.js",
+    "dev": "rm -rf dist && webpack serve --mode development --open --hot"
+  }
+}
