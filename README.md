@@ -2,7 +2,7 @@
 
 ## Getting Started
 
-Run database (you need to have Docker installed):
+Run MongoDb database (you need to have Docker installed):
 
 ```sh
 docker-compose up -d
