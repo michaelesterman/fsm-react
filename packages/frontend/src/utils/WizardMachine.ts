@@ -1,15 +1,15 @@
 export const wizardMachineConfig = {
-  initialState: "emailEntry",
+  initialState: "enterEmail",
   states: {
-    emailEntry: {
-      NEXT: "step2",
+    enterEmail: {
+      NEXT: "chooseNewsletters",
     },
-    step2: {
-      NEXT: "step3",
-      BACK: "emailEntry",
+    chooseNewsletters: {
+      NEXT: "acceptTerms",
+      BACK: "enterEmail",
     },
-    step3: {
-      BACK: "step2",
+    acceptTerms: {
+      BACK: "chooseNewsletters",
       SUBMIT: "submitting",
     },
     submitting: {

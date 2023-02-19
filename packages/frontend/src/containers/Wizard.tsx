@@ -6,10 +6,14 @@ import { config } from "../configuration";
 
 const Wizard = () => {
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [newsletters, setNewsletters] = useState([]);
   const [email, setEmail] = useState("");
   const [agreement, setAgreement] = useState(false);
+  const [error, setError] = useState(
+    "Something wrong happened. Please try again later"
+  );
+  const [success, setSuccess] = useState("You've suscribed successfully!");
+
   const [current, send] = useMachine(wizardMachineConfig);
 
   useEffect(() => {
@@ -99,7 +103,7 @@ const Wizard = () => {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        {current.match("emailEntry") && (
+        {current.match("enterEmail") && (
           <>
             <label htmlFor="email">Email:</label>
             <input
@@ -112,9 +116,9 @@ const Wizard = () => {
           </>
         )}
 
-        {current.match("step2") && loading && <div>Loading...</div>}
+        {current.match("chooseNewsletters") && loading && <div>Loading...</div>}
 
-        {current.match("step2") && (
+        {current.match("chooseNewsletters") && (
           <fieldset>
             <legend>Newsletters:</legend>
 
@@ -133,7 +137,7 @@ const Wizard = () => {
           </fieldset>
         )}
 
-        {current.match("step3") && (
+        {current.match("acceptTerms") && (
           <label htmlFor="terms">
             <input
               type="checkbox"
