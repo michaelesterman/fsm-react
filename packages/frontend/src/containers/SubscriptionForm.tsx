@@ -69,6 +69,12 @@ const SubscriptionForm = () => {
     send({ type: "UPDATE_NEWSLETTERS", newsletter, isChecked });
   };
 
+  const handleTermsChange = (e: any) => {
+    const isChecked = e.target.checked;
+    console.log(`Terms: ${isChecked}`);
+    send({ type: "UPDATE_TERMS", isChecked });
+  };
+
   return (
     <>
       <form onSubmit={handleSubmit}>
@@ -106,6 +112,18 @@ const SubscriptionForm = () => {
           </fieldset>
         )}
 
+        {state.matches("acceptTerms") && (
+          <label htmlFor="terms">
+            <input
+              type="checkbox"
+              id="terms"
+              onChange={handleTermsChange}
+              required
+            />
+            I agree to the terms and conditions.
+          </label>
+        )}
+
         {(state.matches("acceptTerms") ||
           state.matches("chooseNewsletters") ||
           state.matches("error")) && (
@@ -121,14 +139,14 @@ const SubscriptionForm = () => {
           </button>
         )}
 
-        {state.matches("submitting") && <p>Submitting...</p>}
-        {state.matches("success") && <p>Thank you for subscribing!</p>}
-
         {state.matches("acceptTerms") && (
           <button type="submit" disabled={state.matches("submitting")}>
             Subscribe
           </button>
         )}
+
+        {state.matches("submitting") && <p>Submitting...</p>}
+        {state.matches("success") && <p>Thank you for subscribing!</p>}
       </form>
     </>
   );

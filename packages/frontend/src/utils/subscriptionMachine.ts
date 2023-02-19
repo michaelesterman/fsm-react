@@ -38,6 +38,9 @@ export const subscriptionMachine = createMachine(
       },
       acceptTerms: {
         on: {
+          UPDATE_TERMS: {
+            actions: ["updateTermsAccepted"],
+          },
           NEXT: {
             target: "submit",
             // actions: ["updateTermsAccepted"],
