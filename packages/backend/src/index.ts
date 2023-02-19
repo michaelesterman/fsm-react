@@ -36,6 +36,8 @@ app.get("/api/newsletters", async (req: Request, res: Response) => {
 
 // Define an endpoint for subscribing to the newsletter
 app.post("/api/subscribe", async (req, res) => {
+  console.log(req.body);
+
   const { email, agreedToTerms } = req.body;
 
   if (!email || !agreedToTerms) {
