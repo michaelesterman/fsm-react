@@ -40,19 +40,24 @@ export const subscriptionMachine = createMachine(
         on: {
           NEXT: {
             target: "submit",
-            actions: ["updateTermsAccepted"],
+            // actions: ["updateTermsAccepted"],
           },
           BACK: "chooseNewsletters",
+          SUBSCRIBE_SUCCESS: {
+            target: "success",
+          },
+          SUBSCRIBE_ERROR: {
+            target: "error",
+            actions: ["updateError"],
+          },
         },
       },
       submit: {
-        invoke: {
-          src: "submitSubscription",
-          onDone: {
+        on: {
+          SUBSCRIBE_SUCCESS: {
             target: "success",
-            actions: ["clearForm"],
           },
-          onError: {
+          SUBSCRIBE_ERROR: {
             target: "error",
             actions: ["updateError"],
           },
@@ -105,7 +110,10 @@ export const subscriptionMachine = createMachine(
         termsAccepted: true,
       }),
       updateError: assign({
-        error: (context, event: any) => event.data,
+        error: (context, event: any) => {
+          console.error(event);
+          return event.error;
+        },
       }),
       clearForm: assign({
         email: "",

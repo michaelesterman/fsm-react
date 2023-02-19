@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useMachine } from "@xstate/react";
 import { subscriptionMachine } from "../utils/subscriptionMachine";
+import axios from "axios";
 
 const SubscriptionForm = () => {
   const [state, send] = useMachine(subscriptionMachine);
@@ -8,8 +9,10 @@ const SubscriptionForm = () => {
   useEffect(() => {
     const getNewsletters = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/newsletters");
-        const result = await response.json();
+        const response = await axios.get(
+          "http://localhost:3000/api/newsletters"
+        );
+        const result = response.data;
         return result;
       } catch (error) {
         console.log(error);
@@ -25,22 +28,30 @@ const SubscriptionForm = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    const response = await fetch("http://localhost:3000/api/subscribe", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: state.context.email,
-        newsletters: state.context.newsletters,
-        agreedToTerms: true,
-      }),
-    });
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/subscribe",
+        {
+          email: state.context.email,
+          newsletters: state.context.newsletters,
+          agreedToTerms: true,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    if (response.ok) {
-      send("SUBSCRIBE_SUCCESS");
-    } else {
-      send("SUBSCRIBE_FAILURE");
+      if (response.status === 200) {
+        console.log("Success!");
+        send("SUBSCRIBE_SUCCESS");
+      }
+    } catch (error) {
+      console.error(error);
+      const errorMessage = error.response.data.error ?? "Some error happened.";
+      console.error(errorMessage);
+      send({ type: "SUBSCRIBE_ERROR", error: errorMessage });
     }
   };
 
@@ -59,15 +70,11 @@ const SubscriptionForm = () => {
     send({ type: "UPDATE_NEWSLETTERS", newsletter, isChecked });
   };
 
-  // const newsletters = [
-  //   { id: "1", title: "Newsletter 1", checked: true },
-  //   { id: "2", title: "Newsletter 2" },
-  //   { id: "3", title: "Newsletter 3" },
-  // ];
-
   return (
     <>
       <form onSubmit={handleSubmit}>
+        {state.matches("error") && <p>{state.context.error}</p>}
+
         {state.matches("enterEmail") && (
           <>
             <label htmlFor="email">Email:</label>
@@ -101,7 +108,8 @@ const SubscriptionForm = () => {
         )}
 
         {(state.matches("acceptTerms") ||
-          state.matches("chooseNewsletters")) && (
+          state.matches("chooseNewsletters") ||
+          state.matches("error")) && (
           <button type="button" onClick={() => send("BACK")}>
             Back
           </button>
@@ -116,9 +124,6 @@ const SubscriptionForm = () => {
 
         {state.matches("submitting") && <p>Submitting...</p>}
         {state.matches("success") && <p>Thank you for subscribing!</p>}
-        {state.matches("failure") && (
-          <p>Subscription failed. Please try again.</p>
-        )}
 
         {state.matches("acceptTerms") && (
           <button type="submit" disabled={state.matches("submitting")}>
