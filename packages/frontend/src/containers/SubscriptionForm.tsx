@@ -104,19 +104,23 @@ const SubscriptionForm = () => {
   };
 
   return (
-    <div>
+    <div className="form-container">
       <form onSubmit={handleSubmit}>
         {current.match("enterEmail") && (
-          <>
-            <label htmlFor="email">Email:</label>
+          <div>
+            <label htmlFor="email" className="label">
+              Email:
+            </label>
+
             <input
               type="email"
               id="email"
               onChange={handleEmailChange}
               value={email}
               required
+              className="input"
             />
-          </>
+          </div>
         )}
 
         {current.match("error") && <div>{error}</div>}
@@ -126,57 +130,76 @@ const SubscriptionForm = () => {
         {current.match("submitting") && loading && <div>Submitting...</div>}
 
         {current.match("chooseNewsletters") && (
-          <fieldset>
+          <fieldset className="fieldset">
             <legend>Newsletters:</legend>
 
             {newsletters.map(({ _id, title, isChecked }) => (
-              <label key={_id} htmlFor={`${_id}`}>
-                <input
-                  type="checkbox"
-                  id={_id}
-                  value={_id}
-                  checked={isChecked || false}
-                  onChange={handleNewsletterChange}
-                />
-                {title}
-              </label>
+              <div>
+                <label key={_id} htmlFor={`${_id}`}>
+                  <input
+                    type="checkbox"
+                    id={_id}
+                    value={_id}
+                    checked={isChecked || false}
+                    onChange={handleNewsletterChange}
+                  />
+                  {title}
+                </label>
+              </div>
             ))}
           </fieldset>
         )}
 
         {current.match("acceptTerms") && (
-          <label htmlFor="terms">
-            <input
-              type="checkbox"
-              id="terms"
-              checked={agreement || false}
-              onChange={handleAgreementChange}
-              required
-            />
-            I agree to the terms and conditions.
-          </label>
+          <div>
+            <label htmlFor="terms">
+              <input
+                type="checkbox"
+                id="terms"
+                checked={agreement || false}
+                onChange={handleAgreementChange}
+                required
+                className="checkbox"
+              />
+              I agree to the terms and conditions.
+            </label>
+          </div>
         )}
 
-        {(current.match("acceptTerms") ||
-          current.match("chooseNewsletters") ||
-          current.match("failure")) && (
-          <button type="button" onClick={() => send("BACK")}>
-            Back
-          </button>
-        )}
+        <div className="button-container">
+          {(current.match("acceptTerms") ||
+            current.match("chooseNewsletters") ||
+            current.match("failure")) && (
+            <button
+              className="button"
+              type="button"
+              onClick={() => send("BACK")}
+            >
+              Back
+            </button>
+          )}
 
-        {(current.match("enterEmail") ||
-          current.match("chooseNewsletters")) && (
-          <button type="button" onClick={() => send("NEXT")}>
-            Next
-          </button>
-        )}
+          {(current.match("enterEmail") ||
+            current.match("chooseNewsletters")) && (
+            <button
+              className="button"
+              type="button"
+              onClick={() => send("NEXT")}
+            >
+              Next
+            </button>
+          )}
 
-        {current.match("acceptTerms") && (
-          <button type="submit" disabled={current.match("submitting")}>
-            Subscribe
-          </button>
-        )}
+          {current.match("acceptTerms") && (
+            <button
+              className="button"
+              type="submit"
+              disabled={current.match("submitting")}
+            >
+              Subscribe
+            </button>
+          )}
+        </div>
       </form>
     </div>
   );
