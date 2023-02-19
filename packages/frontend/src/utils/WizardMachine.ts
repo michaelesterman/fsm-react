@@ -1,13 +1,22 @@
 export const wizardMachineConfig = {
-  // we start disconnected
-  initialState: "step1",
+  initialState: "emailEntry",
   states: {
-    step1: {
+    emailEntry: {
       NEXT: "step2",
     },
     step2: {
       NEXT: "step3",
+      BACK: "emailEntry",
     },
-    step3: {},
+    step3: {
+      BACK: "step2",
+      SUBMIT: "submitting",
+    },
+    submitting: {
+      SUBMIT_SUCCESS: "success",
+      SUBMIT_FAILURE: "failure",
+    },
+    success: {},
+    failure: {},
   },
 };
