@@ -5,8 +5,6 @@ import SubscriptionForm from "./containers/SubscriptionForm";
 const App = () => {
   return (
     <div>
-      <h1>Hello World!</h1>
-
       <SubscriptionForm />
     </div>
   );

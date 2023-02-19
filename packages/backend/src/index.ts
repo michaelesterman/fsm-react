@@ -48,7 +48,11 @@ app.post("/api/subscribe", async (req, res) => {
   const subscriber = await getSubscriber(email);
 
   if (subscriber && subscriber.agreedToTerms) {
-    return res.status(400).json({ error: "You've already subscribed." });
+    return res
+      .status(400)
+      .json({
+        error: "You've already subscribed. We'll update your preferences.",
+      });
   }
 
   // Save the user object to the database, or update the confirmation if the user already exists

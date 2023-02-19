@@ -31,14 +31,12 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
-    "@xstate/react": "^3.2.1",
     "axios": "^1.3.3",
     "concurrently": "^7.6.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "mongoose": "^6.9.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "xstate": "^4.36.0"
+    "react-dom": "^18.2.0"
   }
 }
