@@ -1,5 +1,9 @@
 {
   "name": "fsa-react-showcase",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w backend\" \"npm run dev -w frontend\""
+  },
   "workspaces": [
     "packages/*",
     "packages/libraries/*"
@@ -29,6 +33,7 @@
   "dependencies": {
     "@xstate/react": "^3.2.1",
     "axios": "^1.3.3",
+    "concurrently": "^7.6.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "mongoose": "^6.9.2",
