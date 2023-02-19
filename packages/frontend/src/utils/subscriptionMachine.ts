@@ -7,7 +7,7 @@ export const subscriptionMachine = createMachine(
     initial: "enterEmail",
     context: {
       email: "",
-      newsletters: {},
+      newsletters: [],
       termsAccepted: false,
       error: null,
     },
@@ -19,6 +19,9 @@ export const subscriptionMachine = createMachine(
           },
           UPDATE_EMAIL: {
             actions: ["updateEmail"],
+          },
+          SEED_NEWSLETTERS: {
+            actions: ["seedNewsletters"],
           },
         },
       },
@@ -76,26 +79,26 @@ export const subscriptionMachine = createMachine(
           return event.email;
         },
       }),
+      seedNewsletters: assign({
+        newsletters: (context, event: any) => {
+          console.log(event);
+          return event.newsletters;
+        },
+      }),
       updateNewsletters: assign({
         newsletters: (context, event: any) => {
           console.log(event);
           console.log(context.newsletters);
 
-          return {
-            ...context.newsletters,
-            [event.newsletter]: event.isChecked,
-          };
-          // console.log(event);
-          // console.log(context.newsletters);
-          // const newsletterInContext = context.newsletters.find(
-          //   (n) =>
-          // );
-          // if (event.isChecked && !newsletterInContext) {
-          //   return [...context.newsletters, event.newsletter];
-          // } else if (!event.isChecked && newsletterInContext) {
-          //   return context.newsletters.filter((n) => n !== event.newsletter);
-          // }
-          // return context.newsletters;
+          const newsletterToUpdate = context.newsletters.find((newsletter) => {
+            return newsletter._id === event.newsletter;
+          });
+
+          console.log(newsletterToUpdate);
+
+          newsletterToUpdate.isChecked = event.isChecked;
+
+          return context.newsletters;
         },
       }),
       updateTermsAccepted: assign({
