@@ -1,39 +1,57 @@
-import React, { useEffect } from "react";
-import { useMachine } from "@xstate/react";
-import { subscriptionMachine } from "../utils/subscriptionMachine";
+import React, { useEffect, useState } from "react";
+import { subscriptionMachineConfig } from "../utils/subscriptionMachine";
+import { useMachine } from "../utils/useMachine";
 import axios from "axios";
 import { config } from "../configuration";
 
 const SubscriptionForm = () => {
-  const [state, send] = useMachine(subscriptionMachine);
+  const [loading, setLoading] = useState(true);
+  const [newsletters, setNewsletters] = useState([]);
+  const [email, setEmail] = useState("");
+  const [agreement, setAgreement] = useState(false);
+  const [error, setError] = useState(
+    "Something wrong happened. Please try again later"
+  );
+  const [success, setSuccess] = useState("You've suscribed successfully!");
+
+  const [current, send] = useMachine(subscriptionMachineConfig);
 
   useEffect(() => {
+    let ignore = false;
+
     const getNewsletters = async () => {
       try {
         const response = await axios.get(`${config.API_URL}/newsletters`);
         const result = response.data;
-        return result;
+
+        if (!ignore) {
+          console.log(result);
+          setNewsletters(result);
+          setLoading(false);
+        }
+        return () => (ignore = true);
       } catch (error) {
-        console.log(error);
-        return [];
+        console.error(error);
+        setError("Can't load newsletters");
+        return null;
       }
     };
 
-    getNewsletters().then((newsletters) => {
-      send({ type: "SEED_NEWSLETTERS", newsletters });
-    });
+    getNewsletters();
   }, []);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     try {
+      send("SUBMIT");
+
       const response = await axios.post(
         `${config.API_URL}/subscribe`,
         {
-          email: state.context.email,
-          newsletters: state.context.newsletters,
-          agreedToTerms: true,
+          email,
+          newsletters,
+          agreedToTerms: agreement,
         },
         {
           headers: {
@@ -48,62 +66,76 @@ const SubscriptionForm = () => {
       }
     } catch (error) {
       console.error(error);
-      const errorMessage = error.response.data.error ?? "Some error happened.";
-      console.error(errorMessage);
-      send({ type: "SUBSCRIBE_ERROR", error: errorMessage });
+      setError(error.response.data.error ?? "Some error happened.");
+      send("SUBSCRIBE_ERROR");
     }
   };
 
   const handleEmailChange = (e: any) => {
     console.log(e.target.value);
-    send({ type: "UPDATE_EMAIL", email: e.target.value });
-    console.log(`In state: ${state.context.email}`);
+    setEmail(e.target.value);
+    console.log(`In state: ${email}`);
   };
 
   const handleNewsletterChange = (e: any) => {
     const newsletter = e.target.value;
     const isChecked = e.target.checked;
 
+    console.log(e.target);
+
     console.log(`Newsletter: ${newsletter}, isChecked: ${isChecked}`);
 
-    send({ type: "UPDATE_NEWSLETTERS", newsletter, isChecked });
+    const nextNewsletters = newsletters.map((newsletter) => {
+      if (newsletter._id === e.target.id) {
+        return { ...newsletter, isChecked };
+      }
+      return newsletter;
+    });
+
+    console.log(nextNewsletters);
+
+    setNewsletters(nextNewsletters);
   };
 
-  const handleTermsChange = (e: any) => {
+  const handleAgreementChange = (e: any) => {
     const isChecked = e.target.checked;
     console.log(`Terms: ${isChecked}`);
-    send({ type: "UPDATE_TERMS", isChecked });
+    setAgreement(isChecked);
   };
 
   return (
-    <>
+    <div>
       <form onSubmit={handleSubmit}>
-        {state.matches("error") && <p>{state.context.error}</p>}
-
-        {state.matches("enterEmail") && (
+        {current.match("enterEmail") && (
           <>
             <label htmlFor="email">Email:</label>
             <input
               type="email"
               id="email"
               onChange={handleEmailChange}
+              value={email}
               required
             />
           </>
         )}
 
-        {state.matches("chooseNewsletters") && (
+        {current.match("error") && <div>{error}</div>}
+        {current.match("success") && <div>{success}</div>}
+
+        {current.match("chooseNewsletters") && loading && <div>Loading...</div>}
+        {current.match("submitting") && loading && <div>Submitting...</div>}
+
+        {current.match("chooseNewsletters") && (
           <fieldset>
             <legend>Newsletters:</legend>
 
-            {state.context.newsletters.map(({ _id, title, isChecked }) => (
+            {newsletters.map(({ _id, title, isChecked }) => (
               <label key={_id} htmlFor={`${_id}`}>
                 <input
                   type="checkbox"
                   id={_id}
                   value={_id}
                   checked={isChecked || false}
-                  // disabled={isChecked}
                   onChange={handleNewsletterChange}
                 />
                 {title}
@@ -112,43 +144,41 @@ const SubscriptionForm = () => {
           </fieldset>
         )}
 
-        {state.matches("acceptTerms") && (
+        {current.match("acceptTerms") && (
           <label htmlFor="terms">
             <input
               type="checkbox"
               id="terms"
-              onChange={handleTermsChange}
+              checked={agreement || false}
+              onChange={handleAgreementChange}
               required
             />
             I agree to the terms and conditions.
           </label>
         )}
 
-        {(state.matches("acceptTerms") ||
-          state.matches("chooseNewsletters") ||
-          state.matches("error")) && (
+        {(current.match("acceptTerms") ||
+          current.match("chooseNewsletters") ||
+          current.match("failure")) && (
           <button type="button" onClick={() => send("BACK")}>
             Back
           </button>
         )}
 
-        {(state.matches("enterEmail") ||
-          state.matches("chooseNewsletters")) && (
+        {(current.match("enterEmail") ||
+          current.match("chooseNewsletters")) && (
           <button type="button" onClick={() => send("NEXT")}>
             Next
           </button>
         )}
 
-        {state.matches("acceptTerms") && (
-          <button type="submit" disabled={state.matches("submitting")}>
+        {current.match("acceptTerms") && (
+          <button type="submit" disabled={current.match("submitting")}>
             Subscribe
           </button>
         )}
-
-        {state.matches("submitting") && <p>Submitting...</p>}
-        {state.matches("success") && <p>Thank you for subscribing!</p>}
       </form>
-    </>
+    </div>
   );
 };
 
