@@ -134,8 +134,8 @@ const SubscriptionForm = () => {
             <legend>Newsletters:</legend>
 
             {newsletters.map(({ _id, title, isChecked }) => (
-              <div>
-                <label key={_id} htmlFor={`${_id}`}>
+              <div key={_id}>
+                <label htmlFor={`${_id}`}>
                   <input
                     type="checkbox"
                     id={_id}
