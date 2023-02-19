@@ -9,6 +9,7 @@ const Wizard = () => {
   const [error, setError] = useState("");
   const [newsletters, setNewsletters] = useState([]);
   const [email, setEmail] = useState("");
+  const [agreement, setAgreement] = useState(false);
   const [current, send] = useMachine(wizardMachineConfig);
 
   useEffect(() => {
@@ -73,17 +74,32 @@ const Wizard = () => {
     const newsletter = e.target.value;
     const isChecked = e.target.checked;
 
+    console.log(e.target);
+
     console.log(`Newsletter: ${newsletter}, isChecked: ${isChecked}`);
 
-    // send({ type: "UPDATE_NEWSLETTERS", newsletter, isChecked });
+    const nextNewsletters = newsletters.map((newsletter) => {
+      if (newsletter._id === e.target.id) {
+        return { ...newsletter, isChecked };
+      }
+      return newsletter;
+    });
+
+    console.log(nextNewsletters);
+
+    setNewsletters(nextNewsletters);
+  };
+
+  const handleAgreementChange = (e: any) => {
+    const isChecked = e.target.checked;
+    console.log(`Terms: ${isChecked}`);
+    setAgreement(isChecked);
   };
 
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        {current.match("step1") && <div>Step 1</div>}
-
-        {current.match("step1") && (
+        {current.match("emailEntry") && (
           <>
             <label htmlFor="email">Email:</label>
             <input
@@ -108,13 +124,26 @@ const Wizard = () => {
                   type="checkbox"
                   id={_id}
                   value={_id}
-                  checked={isChecked}
+                  checked={isChecked || false}
                   onChange={handleNewsletterChange}
                 />
                 {title}
               </label>
             ))}
           </fieldset>
+        )}
+
+        {current.match("step3") && (
+          <label htmlFor="terms">
+            <input
+              type="checkbox"
+              id="terms"
+              checked={agreement || false}
+              onChange={handleAgreementChange}
+              required
+            />
+            I agree to the terms and conditions.
+          </label>
         )}
 
         <button type="button" onClick={() => send("BACK")}>
