@@ -2,6 +2,7 @@ import { createMachine, assign } from "xstate";
 
 export const subscriptionMachine = createMachine(
   {
+    predictableActionArguments: true,
     id: "subscription",
     initial: "enterEmail",
     context: {
@@ -15,6 +16,8 @@ export const subscriptionMachine = createMachine(
         on: {
           NEXT: {
             target: "chooseNewsletters",
+          },
+          UPDATE_EMAIL: {
             actions: ["updateEmail"],
           },
         },
@@ -23,6 +26,8 @@ export const subscriptionMachine = createMachine(
         on: {
           NEXT: {
             target: "acceptTerms",
+          },
+          UPDATE_NEWSLETTERS: {
             actions: ["updateNewsletters"],
           },
           BACK: "enterEmail",
@@ -67,11 +72,14 @@ export const subscriptionMachine = createMachine(
   {
     actions: {
       updateEmail: assign({
-        email: (context, event: any) => (context.email = event.value),
+        email: (context, event: any) => {
+          return event.email;
+        },
       }),
       updateNewsletters: assign({
-        newsletters: (context, event: any) =>
-          (context.newsletters = event.newsletters),
+        newsletters: (context, event: any) => {
+          return event.newsletters;
+        },
       }),
       updateTermsAccepted: assign({
         termsAccepted: true,
