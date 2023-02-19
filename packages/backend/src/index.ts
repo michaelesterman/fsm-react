@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 
@@ -25,6 +26,8 @@ mongoose.connect(
 
 // Parse JSON request bodies
 app.use(express.json());
+
+app.use(cors());
 
 app.get("/", (req: Request, res: Response) => {
   res.send("This is the API. Next versions will add authorization.");
