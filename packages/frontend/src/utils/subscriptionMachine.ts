@@ -87,6 +87,7 @@ export const subscriptionMachine = createMachine(
       seedNewsletters: assign({
         newsletters: (context, event: any) => {
           console.log(event);
+          console.log(`Seeding ${Date.now()}`);
           return event.newsletters;
         },
       }),
