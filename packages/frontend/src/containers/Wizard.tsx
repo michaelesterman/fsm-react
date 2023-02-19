@@ -8,6 +8,7 @@ const Wizard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [newsletters, setNewsletters] = useState([]);
+  const [email, setEmail] = useState("");
   const [current, send] = useMachine(wizardMachineConfig);
 
   useEffect(() => {
@@ -34,18 +35,73 @@ const Wizard = () => {
     getNewsletters();
   }, []);
 
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(
+        `${config.API_URL}/subscribe`,
+        {
+          email,
+          newsletters,
+          agreedToTerms: true,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        console.log("Success!");
+      }
+    } catch (error) {
+      console.error(error);
+      const errorMessage = error.response.data.error ?? "Some error happened.";
+      setError(errorMessage);
+    }
+  };
+
+  const handleEmailChange = (e: any) => {
+    console.log(e.target.value);
+    setEmail(e.target.value);
+    console.log(`In state: ${email}`);
+  };
+
   return (
     <div>
-      {current.match("step1") && <div>Step 1</div>}
+      <form onSubmit={handleSubmit}>
+        {current.match("step1") && <div>Step 1</div>}
 
-      {current.match("step2") && loading && <div>Loading...</div>}
+        {current.match("step1") && (
+          <>
+            <label htmlFor="email">Email:</label>
+            <input
+              type="email"
+              id="email"
+              onChange={handleEmailChange}
+              value={email}
+              required
+            />
+          </>
+        )}
 
-      {current.match("step2") &&
-        newsletters.map((newsletter) => (
-          <div key={newsletter._id}>{newsletter.title}</div>
-        ))}
+        {current.match("step2") && loading && <div>Loading...</div>}
 
-      <button onClick={() => send("NEXT")}>Next</button>
+        {current.match("step2") &&
+          newsletters.map((newsletter) => (
+            <div key={newsletter._id}>{newsletter.title}</div>
+          ))}
+
+        <button type="button" onClick={() => send("BACK")}>
+          Back
+        </button>
+
+        <button type="button" onClick={() => send("NEXT")}>
+          Next
+        </button>
+      </form>
     </div>
   );
 };
