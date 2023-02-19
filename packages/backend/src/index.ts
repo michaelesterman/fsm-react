@@ -1,33 +1,37 @@
 import express, { Request, Response } from "express";
+import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-// import { Subscriber } from "./models/Subscriber";
 import {
   createSubscriber,
   getSubscriber,
   updateAgreement,
 } from "./controllers/Subscriber";
 
+import { seedNewsletters } from "./utils/seeder";
+import { getAllNewsletters } from "./controllers/Newsletter";
+
 const app = express();
 const port = process.env.PORT || 3000;
-
-// const mongoOptions = {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// };
 
 mongoose.connect(
   process.env.MONGO_URI || "mongodb://localhost:27017/newsletter"
 );
 
-// Parse JSON request bodies
+await seedNewsletters();
+
 app.use(express.json());
+app.use(cors());
 
 app.get("/", (req: Request, res: Response) => {
   res.send("This is the API. Next versions will add authorization.");
+});
+
+app.get("/api/newsletters", async (req: Request, res: Response) => {
+  res.json(await getAllNewsletters());
 });
 
 // Define an endpoint for subscribing to the newsletter
