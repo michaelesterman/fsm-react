@@ -11,7 +11,7 @@ This a very simple form for an email subscription. Finite state model is linear.
 Run MongoDb database (you need to have Docker installed):
 
 ```sh
-docker-compose up -d
+docker compose up -d
 ```
 
 Install dependencies:
