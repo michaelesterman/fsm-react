@@ -1,13 +1,13 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import SubscriptionForm from "./containers/SubscriptionForm";
+import Wizard from "./containers/Wizard";
 
 const App = () => {
   return (
     <div>
       <h1>Hello World!</h1>
 
-      <SubscriptionForm />
+      <Wizard />
     </div>
   );
 };
