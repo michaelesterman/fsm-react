@@ -1,6 +1,6 @@
 import { useReducer } from "react";
 
-export const buildMachineReducer =
+const buildMachineReducer =
   (config: any) => (currentState: any, event: any) => {
     try {
       const stateTransitions = config.states[currentState];
