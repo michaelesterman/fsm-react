@@ -69,6 +69,15 @@ const Wizard = () => {
     console.log(`In state: ${email}`);
   };
 
+  const handleNewsletterChange = (e: any) => {
+    const newsletter = e.target.value;
+    const isChecked = e.target.checked;
+
+    console.log(`Newsletter: ${newsletter}, isChecked: ${isChecked}`);
+
+    // send({ type: "UPDATE_NEWSLETTERS", newsletter, isChecked });
+  };
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -89,10 +98,24 @@ const Wizard = () => {
 
         {current.match("step2") && loading && <div>Loading...</div>}
 
-        {current.match("step2") &&
-          newsletters.map((newsletter) => (
-            <div key={newsletter._id}>{newsletter.title}</div>
-          ))}
+        {current.match("step2") && (
+          <fieldset>
+            <legend>Newsletters:</legend>
+
+            {newsletters.map(({ _id, title, isChecked }) => (
+              <label key={_id} htmlFor={`${_id}`}>
+                <input
+                  type="checkbox"
+                  id={_id}
+                  value={_id}
+                  checked={isChecked}
+                  onChange={handleNewsletterChange}
+                />
+                {title}
+              </label>
+            ))}
+          </fieldset>
+        )}
 
         <button type="button" onClick={() => send("BACK")}>
           Back
