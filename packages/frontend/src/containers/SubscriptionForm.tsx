@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useMachine } from "@xstate/react";
 import { subscriptionMachine } from "../utils/subscriptionMachine";
 import axios from "axios";
+import { config } from "../configuration";
 
 const SubscriptionForm = () => {
   const [state, send] = useMachine(subscriptionMachine);
@@ -9,9 +10,7 @@ const SubscriptionForm = () => {
   useEffect(() => {
     const getNewsletters = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3000/api/newsletters"
-        );
+        const response = await axios.get(`${config.API_URL}/newsletters`);
         const result = response.data;
         return result;
       } catch (error) {
@@ -30,7 +29,7 @@ const SubscriptionForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/subscribe",
+        `${config.API_URL}/subscribe`,
         {
           email: state.context.email,
           newsletters: state.context.newsletters,
