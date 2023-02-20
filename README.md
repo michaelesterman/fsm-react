@@ -6,6 +6,8 @@ This a very simple form for an email subscription. Finite state model is linear.
 
 ![Recording](docs/recording.gif)
 
+![Statechart](docs/statechart.png)
+
 ## Getting Started
 
 Run MongoDb database (you need to have Docker installed):
