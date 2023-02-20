@@ -44,6 +44,7 @@ Of course, this is a very simple version with data still being managed with `use
 
 - Bundle feels pretty large and requires trimming. Mainly caused by monorepository structure. Will focus on it on later iterations.
 - No tests, sorry.
+- Error state is a dead end right now, but can be easily routed back - either to previous state, to resubmitting or to the beginning.
 - Styles require work. I would still prefer using MUI or Tailwind just to save time.
 - Quite a few `any`'s in TypeScript.
 - React 18 does its thing with firing `useEffect` [twice](https://beta.reactjs.org/learn/synchronizing-with-effects#how-to-handle-the-effect-firing-twice-in-development).
