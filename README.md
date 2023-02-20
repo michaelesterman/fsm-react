@@ -43,6 +43,7 @@ Of course, this is a very simple version with data still being managed with `use
 - Bundle feels pretty large and requires trimming. Mainly caused by monorepository structure. Will focus on it on later iterations.
 - No tests, sorry.
 - Styles require work. I would still prefer using MUI or Tailwind just to save time.
+- Quite a few `any`'s in TypeScript.
 - React 18 does its thing with firing `useEffect` [twice](https://beta.reactjs.org/learn/synchronizing-with-effects#how-to-handle-the-effect-firing-twice-in-development).
 - Email is not validated and can be left empty.
 - Browser's back and forward buttons don't work properly.
